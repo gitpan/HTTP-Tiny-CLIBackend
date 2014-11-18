@@ -1,0 +1,102 @@
+NAME
+    HTTP::Tiny::CLIBackend - Use network CLI client (curl/wget) with
+    HTTP::Tiny interface
+
+VERSION
+    This document describes version 0.01 of HTTP::Tiny::CLIBackend (from
+    Perl distribution HTTP-Tiny-CLIBackend), released on 2014-11-18.
+
+SYNOPSIS
+     use HTTP::Tiny::CLIBackend;
+
+     my $response = HTTP::Tiny::CLIBackend->new->get('http://example.com/');
+
+     die "Failed!\n" unless $response->{success};
+
+     print "$response->{status} $response->{reason}\n";
+
+     while (my ($k, $v) = each %{$response->{headers}}) {
+         for (ref $v eq 'ARRAY' ? @$v : $v) {
+             print "$k: $_\n";
+         }
+     }
+
+     print $response->{content} if length $response->{content};
+
+DESCRIPTION
+    NOTE: EARLY RELEASE. Many features like wget support, redirects, cookies
+    are not yet implemented.
+
+    This class lets you use CLI network clients (currently "wget" and "curl"
+    are supported) with an HTTP::Tiny interface. It is an alternative you
+    can try when you must connect to https but IO::Socket::SSL is not
+    available (and you cannot build it because there is no C compiler on the
+    system).
+
+    Note that this is not a subclass of "HTTP::Tiny", but a look-alike
+    object. Some features of HTTP::Tiny are not supported or are implemented
+    differently: XXX.
+
+METHODS
+new(%attributes) => obj
+    Aside from attributes known by HTTP::Tiny, there are additional
+    attributes:
+
+    *   cli_search_order => str
+
+        A comma-separated list of CLI program names to search, in order.
+        Currently only wget and curl are supported. Either 'curl', 'wget',
+        'curl,wget' or 'wget,curl'. The default is 'curl,wget'.
+
+    *   curl_path => str
+
+        Set path to curl. The default is to search for "curl" in PATH.
+
+    *   wget_path => str
+
+        Set path to wget. The default is to search for "wget" in PATH.
+
+CAVEATS
+    This module is currently not exactly "tiny": it depends on a couple of
+    non-core modules.
+
+    Some information (like "user:password" stanza in URL) might leak because
+    it is specified in command line which might be visible from ps or other
+    process-table tools.
+
+TODO
+    Support various "SSL_options" in the attributes.
+
+    Support request options: trailer_callback, data_callback?
+
+    Win32 support.
+
+    Implement max_size.
+
+SEE ALSO
+    HTTP::Tiny
+
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/HTTP-Tiny-CLIBackend>.
+
+SOURCE
+    Source repository is at
+    <https://github.com/perlancar/perl-HTTP-Tiny-CLIBackend>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    <https://rt.cpan.org/Public/Dist/Display.html?Name=HTTP-Tiny-CLIBackend>
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
+
+AUTHOR
+    perlancar <perlancar@cpan.org>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2014 by perlancar@cpan.org.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
